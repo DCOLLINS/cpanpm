@@ -2397,18 +2397,18 @@ sub follow_prereqs {
                 join("", map {"    $_->[0] \[$map{$_->[1]}]\n"} @good_prereq_tuples),
                );
     my $follow = 0;
-    if ($CPAN::Config->{\prerequisites_policy} eq "follow") {
+    if ($CPAN::Config->{prerequisites_policy} eq "follow") {
         $follow = 1;
-    } elsif ($CPAN::Config->{prerequisites_policy} eq "ignore") {
-        my @prereq = map { $_=>[0] } @good_prereq_tuples;
-        local($") = ", ";
-        $CPAN::Frontend->
-            myprint("  Ignoring dependencies on modules @prereq\n");
-    } else {
+    } elsif ($CPAN::Config->{prerequisites_policy} eq "ask") {
         my $answer = CPAN::Shell::colorable_makemaker_prompt(
 "Shall I follow them and prepend them to the queue
 of modules we are processing right now?", "yes");
         $follow = $answer =~ /^\s*y/i;
+    } else {
+        my @prereq = map { $_->[0] } @good_prereq_tuples;
+        local($") = ", ";
+        $CPAN::Frontend->
+            myprint("  Ignoring dependencies on modules @prereq\n");
     }
     if ($follow) {
         my $id = $self->id;
