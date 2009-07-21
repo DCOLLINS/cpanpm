@@ -2399,16 +2399,16 @@ sub follow_prereqs {
     my $follow = 0;
     if ($CPAN::Config->{prerequisites_policy} eq "follow") {
         $follow = 1;
-    } elsif ($CPAN::Config->{prerequisites_policy} eq "ask") {
-        my $answer = CPAN::Shell::colorable_makemaker_prompt(
-"Shall I follow them and prepend them to the queue
-of modules we are processing right now?", "yes");
-        $follow = $answer =~ /^\s*y/i;
-    } else {
+    } elsif ($CPAN::Config->{prerequisites_policy} eq "ignore") {
         my @prereq = map { $_->[0] } @good_prereq_tuples;
         local($") = ", ";
         $CPAN::Frontend->
             myprint("  Ignoring dependencies on modules @prereq\n");
+    } else {
+        my $answer = CPAN::Shell::colorable_makemaker_prompt(
+"Shall I follow them and prepend them to the queue
+of modules we are processing right now?", "yes");
+        $follow = $answer =~ /^\s*y/i;
     }
     if ($follow) {
         my $id = $self->id;
